@@ -59,3 +59,6 @@ Thumbs.db
 *.pkl
 *.joblib
 savedmodel.pth
+
+# Virtual Environment
+mlops_env/
