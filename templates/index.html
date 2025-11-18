@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Olivetti Faces Classifier</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .button { 
+            background-color: #007bff; 
+            color: white; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            margin: 10px 0; 
+        }
+        .result { 
+            margin: 20px 0; 
+            padding: 15px; 
+            border-radius: 5px; 
+            background-color: #f8f9fa; 
+        }
+        .correct { color: green; }
+        .incorrect { color: red; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Olivetti Faces Classification</h1>
+        <p>This application uses a trained Decision Tree model to classify Olivetti faces.</p>
+        
+        <button class="button" onclick="makePrediction()">Make Prediction</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function makePrediction() {
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('result');
+                if (data.error) {
+                    resultDiv.innerHTML = `<div class="result incorrect">Error: ${data.error}</div>`;
+                } else {
+                    const correctText = data.correct ? 'CORRECT' : 'INCORRECT';
+                    const className = data.correct ? 'correct' : 'incorrect';
+                    resultDiv.innerHTML = `
+                        <div class="result">
+                            <h3>Prediction Result:</h3>
+                            <p><strong>Predicted Class:</strong> ${data.prediction}</p>
+                            <p><strong>Actual Class:</strong> ${data.actual}</p>
+                            <p class="${className}"><strong>Result:</strong> ${correctText}</p>
+                            <p><em>Note: Using sample data from Olivetti dataset</em></p>
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('result').innerHTML = `<div class="result incorrect">Error making prediction</div>`;
+            });
+        }
+    </script>
+</body>
+</html>
